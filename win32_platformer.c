@@ -8,19 +8,6 @@
 #define HANDMADE_MATH_USE_DEGREES
 #include "HandmadeMath.h"
 
-//#include "renderer.cpp"
-
-/*
-
-	- Need to have a backup strategy (Github)
-	
-	- I'm not really in a rush to build a game, so it's not like I NEED
-	- to use an engine. Also, if I build it out on C and give the game 
-	- all the bells and whistles, I just open up myself to so many more
-	- prospects, jobs wise. 
-
-*/
-
 global b32 game_loop;
 global HGLRC rendering_context;
 global float SCREEN_WIDTH = 1280.0;

@@ -8,6 +8,24 @@
 #define HANDMADE_MATH_USE_DEGREES
 #include "HandmadeMath.h"
 
+/*
+
+	- Now that I have it on Github, I can always refer back to it should I ever encounter a 
+	- virus on my computer. 
+	- Get it running with camera movement. 
+	- Place a 2D Pixel art background 
+	- Place a 2D pixel art character 
+	- Animate the 2D pixel art character
+	- Move the character on the screen 
+	- Movement will require Ground, Gravity, basic Physics equations
+	- Implement slope movement
+
+	Things I Want:
+	- ALL 2D Lighting: Glow, Normal Maps, etc. 
+	- Particle Effects
+
+*/
+
 global b32 game_loop;
 global HGLRC rendering_context;
 global float SCREEN_WIDTH = 1280.0;
@@ -440,7 +458,8 @@ WinMain(HINSTANCE instance,
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 			int width, height, number_of_channels;
-			unsigned char* data = stbi_load("D:\\work\\bangers\\Bangers\\Bangers\\marble_tile_1.png",
+			unsigned char* data = stbi_load(
+				"G:\\VisualStudioProjects\\Platformer\\Platformer\\asset_packs\\Asset Pack-V1\\Player Idle\\Player Idle 48x48.png",
 				&width, &height, &number_of_channels, 0);
 
 			if (data)

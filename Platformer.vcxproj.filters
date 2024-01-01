@@ -29,11 +29,16 @@
     <ClInclude Include="HandmadeMath.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="opengl.h">
+    <ClInclude Include="gl_lite.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="glext.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="sprite_shader.vert" />
+    <None Include="sprite_shader.frag" />
+    <None Include=".gitignore" />
   </ItemGroup>
 </Project>

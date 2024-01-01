@@ -135,8 +135,13 @@
     <ClInclude Include="glext.h" />
     <ClInclude Include="platformer.h" />
     <ClInclude Include="HandmadeMath.h" />
-    <ClInclude Include="opengl.h" />
+    <ClInclude Include="gl_lite.h" />
     <ClInclude Include="stb_image.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".gitignore" />
+    <None Include="sprite_shader.frag" />
+    <None Include="sprite_shader.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

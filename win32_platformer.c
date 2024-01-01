@@ -3,7 +3,9 @@
 #include <windows.h>
 #include <stdio.h>
 #include "platformer.h"
-#include "opengl.h"
+
+#define GL_LITE_IMPLEMENTATION
+#include "gl_lite.h"
 
 #define HANDMADE_MATH_USE_DEGREES
 #include "HandmadeMath.h"

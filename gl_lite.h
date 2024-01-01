@@ -26,16 +26,6 @@
     recognized, you are granted a perpetual, irrevocable license to copy,
     distribute, and modify this file as you see fit.
 */
-#ifndef GL_LITE_H
-#define GL_LITE_H
-
-#if defined(__linux__)
-#include <dlfcn.h>
-#define GLDECL // Empty define
-#define PAPAYA_GL_LIST_WIN32 // Empty define
-#endif // __linux__
-
-#if defined(_WIN32)
 #define NOMINMAX
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -62,7 +52,6 @@
 #define GL_VERTEX_SHADER                  0x8B31
 #define GL_LINK_STATUS                    0x8B82
 
-
 typedef char GLchar;
 typedef ptrdiff_t GLintptr;
 typedef ptrdiff_t GLsizeiptr;
@@ -72,8 +61,6 @@ typedef ptrdiff_t GLsizeiptr;
     GLE(void,      BlendEquation,           GLenum mode) \
     GLE(void,      ActiveTexture,           GLenum texture) \
     /* end */
-
-#endif // _WIN32
 
 #include <GL/gl.h>
 
@@ -110,6 +97,12 @@ typedef ptrdiff_t GLsizeiptr;
     GLE(void,      UniformMatrix4fv,        GLint location, GLsizei count, GLboolean transpose, const GLfloat *value) \
     GLE(void,      UseProgram,              GLuint program) \
     GLE(void,      VertexAttribPointer,     GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid * pointer) \
+    GLE(void,      GetProgramiv,          GLuint program, GLenum pname, GLint* params) \
+    GLE(void,      DeleteShader,          GLuint shader) \
+    GLE(void,      GenVertexArrays,       GLsizei n, GLuint* arrays) \
+    GLE(void,      BindVertexArray,       GLuint array) \
+    GLE(void,      GenerateMipmap,        GLenum target) \
+    GLE(void,      DeleteVertexArrays,    GLsizei n, const GLuint* arrays) \
     /* end */
 
 #define GLE(ret, name, ...) typedef ret GLDECL name##proc(__VA_ARGS__); extern name##proc * gl##name;
@@ -119,11 +112,7 @@ PAPAYA_GL_LIST_WIN32
 
 bool gl_lite_init();
 
-#endif //GL_LITE_H
-
 // =============================================================================
-
-#ifdef GL_LITE_IMPLEMENTATION
 
 #define GLE(ret, name, ...) name##proc * gl##name;
 PAPAYA_GL_LIST
@@ -132,25 +121,6 @@ PAPAYA_GL_LIST_WIN32
 
 bool gl_lite_init()
 {
-#if defined(__linux__)
-
-    void* libGL = dlopen("libGL.so", RTLD_LAZY);
-    if (!libGL) {
-        printf("ERROR: libGL.so couldn't be loaded\n");
-        return false;
-    }
-
-#define GLE(ret, name, ...)                                                    \
-            gl##name = (name##proc *) dlsym(libGL, "gl" #name);                    \
-            if (!gl##name) {                                                       \
-                printf("Function gl" #name " couldn't be loaded from libGL.so\n"); \
-                return false;                                                      \
-            }
-    PAPAYA_GL_LIST
-#undef GLE
-
-#elif defined(_WIN32)
-
     HINSTANCE dll = LoadLibraryA("opengl32.dll");
     typedef PROC WINAPI wglGetProcAddressproc(LPCSTR lpszProc);
     if (!dll) {
@@ -170,11 +140,5 @@ bool gl_lite_init()
         PAPAYA_GL_LIST_WIN32
 #undef GLE
 
-#else
-#error "GL loading for this platform is not implemented yet."
-#endif
-
     return true;
 }
-
-#endif //GL_LITE_IMPLEMENTATION

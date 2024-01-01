@@ -1,0 +1,10 @@
+﻿  win32_platformer.c
+G:\VisualStudioProjects\Platformer\Platformer\win32_platformer.c(66,20): warning C4018: '<': signed/unsigned mismatch
+G:\VisualStudioProjects\Platformer\Platformer\win32_platformer.c(71,20): warning C4018: '<': signed/unsigned mismatch
+G:\VisualStudioProjects\Platformer\Platformer\win32_platformer.c(335,76): warning C4244: 'function': conversion from 'f64' to 'float', possible loss of data
+G:\VisualStudioProjects\Platformer\Platformer\win32_platformer.c(339,76): warning C4244: 'function': conversion from 'f64' to 'float', possible loss of data
+G:\VisualStudioProjects\Platformer\Platformer\win32_platformer.c(343,76): warning C4020: 'HMM_NormV3': too many actual parameters
+G:\VisualStudioProjects\Platformer\Platformer\win32_platformer.c(485,25): warning C4244: 'initializing': conversion from 'double' to 'f32', possible loss of data
+G:\VisualStudioProjects\Platformer\Platformer\win32_platformer.c(486,39): warning C4244: 'initializing': conversion from 'double' to 'f32', possible loss of data
+MSVCRTD.lib(exe_main.obj) : error LNK2019: unresolved external symbol main referenced in function "int __cdecl invoke_main(void)" (?invoke_main@@YAHXZ)
+G:\VisualStudioProjects\Platformer\x64\Debug\Platformer.exe : fatal error LNK1120: 1 unresolved externals

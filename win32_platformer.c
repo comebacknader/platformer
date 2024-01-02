@@ -12,8 +12,6 @@
 
 /*
 
-	- Now that I have it on Github, I can always refer back to it should I ever encounter a 
-	- virus on my computer. 
 	- Get it running with camera movement. 
 	- Place a 2D Pixel art background 
 	- Place a 2D pixel art character 
@@ -34,6 +32,7 @@ global float SCREEN_WIDTH = 1280.0;
 global float SCREEN_HEIGHT = 720.0;
 global i64 global_performance_counter_frequency;
 global f64 ms_per_frame;
+global i64 counter_elapsed;
 
 HMM_Vec3 camera_position;
 HMM_Vec3 camera_front;
@@ -48,6 +47,14 @@ typedef struct FileReadResults
 	u32 contents_size;
 	void* contents;
 } FileReadResults;
+
+global void
+console_print_f32(char* fmt_string, f32 number)
+{
+	char buffer[1024];
+	snprintf(buffer, sizeof(buffer), fmt_string, number);
+	OutputDebugStringA(buffer);
+}
 
 global char *
 concat_strings(char *str1, char *str2) 
@@ -323,9 +330,12 @@ win32_process_pending_messages(GameControllerInput* keyboard_controller)
 			u32 vk_code = (u32)message.wParam;
 			b32 was_down = ((message.lParam & (1 << 30)) != 0);
 			b32 is_down = ((message.lParam & (1 << 31)) == 0);
-			if (was_down != is_down)
+			if (true)
 			{
-				f64 camera_speed = 0.05f * ms_per_frame;
+				f64 camera_speed = 0.000005f * counter_elapsed;
+				console_print_f32("counter_elapsed: %.05f \n", counter_elapsed);
+				console_print_f32("camera_speed: %.05f \n", camera_speed);
+
 				if (vk_code == VK_ESCAPE)
 				{
 					game_loop = false;
@@ -573,14 +583,14 @@ WinMain(HINSTANCE instance,
 				u64 cycles_elapsed = end_cycle_count - last_cycle_count;
 				last_cycle_count = end_cycle_count;
 
-				i64 counter_elapsed = end_counter.QuadPart - last_counter.QuadPart;
+				counter_elapsed = end_counter.QuadPart - last_counter.QuadPart;
 				f64 fps = (f64)global_performance_counter_frequency / (f64)counter_elapsed;
 				ms_per_frame = (((1000.0f * (f64)counter_elapsed / (f64)global_performance_counter_frequency)));
-
+#if 0
 				char buffer[1024];
 				snprintf(buffer, sizeof(buffer), "%.02f fps | %.02f ms/f\n", fps, ms_per_frame);
 				OutputDebugStringA(buffer);
-
+#endif
 				last_counter = end_counter;
 				last_cycle_count = end_cycle_count;
 

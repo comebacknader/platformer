@@ -8,5 +8,4 @@ G:\VisualStudioProjects\Platformer\Platformer\win32_platformer.c(349,76): warnin
 G:\VisualStudioProjects\Platformer\Platformer\win32_platformer.c(353,76): warning C4020: 'HMM_NormV3': too many actual parameters
 G:\VisualStudioProjects\Platformer\Platformer\win32_platformer.c(495,25): warning C4244: 'initializing': conversion from 'double' to 'f32', possible loss of data
 G:\VisualStudioProjects\Platformer\Platformer\win32_platformer.c(496,39): warning C4244: 'initializing': conversion from 'double' to 'f32', possible loss of data
-G:\VisualStudioProjects\Platformer\Platformer\win32_platformer.c(560,14): warning C4101: 'rotation_axis': unreferenced local variable
   Platformer.vcxproj -> G:\VisualStudioProjects\Platformer\x64\Debug\Platformer.exe

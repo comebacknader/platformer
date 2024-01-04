@@ -427,10 +427,10 @@ WinMain(HINSTANCE instance,
 			f32 vertices[] =
 			{
 				// positions			// texture coords
-				 0.0f,  1.0f,		0.0f, 1.0f, // top right
-				 1.0f, 0.0f, 		1.0f, 0.0f, // bottom right
-				-1.0f, -1.0f, 		0.0f, 0.0f, // bottom left
-				-1.0f,  1.0f, 		0.0f, 1.0f  // top left
+				 1.0f,  1.0f, 0.0,		1.0f, 1.0f, // top right
+				 1.0f, -1.0f, 0.0, 		1.0f, 0.0f, // bottom right
+				-1.0f, -1.0f, 0.0, 		0.0f, 0.0f, // bottom left
+				-1.0f,  1.0f, 0.0, 		0.0f, 1.0f  // top left
 			};
 
 			u32 indices[] =
@@ -502,7 +502,7 @@ WinMain(HINSTANCE instance,
 			GameInput *old_input = &input[1];
 
 			camera_position = HMM_V3(0.0f, 0.0f, 3.0f);
-			camera_front = HMM_V3(0.0f, 0.0f, -3.0f);
+			camera_front = HMM_V3(0.0f, 0.0f, -1.0f);
 			up = HMM_V3(0.0f, 1.0f, 0.0f);
 
 			camera_target = HMM_V3(0.0f, 0.0f, 0.0f);
@@ -558,15 +558,15 @@ WinMain(HINSTANCE instance,
 				//view = HMM_Translate(HMM_V3(0.0f, 0.0f, 0.0f));
 
 				HMM_Vec3 rotation_axis = HMM_V3(1.0f, 0.0f, 0.0f);
-				//model = HMM_Rotate_RH(0.0f, rotation_axis);
-				//projection = HMM_Perspective_RH_ZO(45.0f, SCREEN_WIDTH / SCREEN_HEIGHT, 0.1f, 100.0f);
-				projection = HMM_Orthographic_RH_ZO(0.0f, 1280.0f, 720.0f, 0.0f, -1.0f, 1.0f);
+				model = HMM_Rotate_RH(0.0f, rotation_axis);
+				projection = HMM_Perspective_RH_ZO(45.0f, SCREEN_WIDTH / SCREEN_HEIGHT, 0.1f, 100.0f);
+				//projection = HMM_Orthographic_RH_ZO(0.0f, 1280.0f, 0, 720.0f, -1.0f, 1.0f);
 				u32 model_location = glGetUniformLocation(shader_program, "model");
-				//u32 view_location = glGetUniformLocation(shader_program, "view");
+				u32 view_location = glGetUniformLocation(shader_program, "view");
 				u32 projection_location = glGetUniformLocation(shader_program, "projection");
 
 				glUniformMatrix4fv(model_location, 1, GL_FALSE, &model.Elements[0][0]);
-				//glUniformMatrix4fv(view_location, 1, GL_FALSE, &view.Elements[0][0]);
+				glUniformMatrix4fv(view_location, 1, GL_FALSE, &view.Elements[0][0]);
 				glUniformMatrix4fv(projection_location, 1, GL_FALSE, &projection.Elements[0][0]);
 
 				glBindVertexArray(vao);

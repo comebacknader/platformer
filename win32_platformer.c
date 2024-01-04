@@ -330,9 +330,10 @@ win32_process_pending_messages(GameControllerInput* keyboard_controller)
 			u32 vk_code = (u32)message.wParam;
 			b32 was_down = ((message.lParam & (1 << 30)) != 0);
 			b32 is_down = ((message.lParam & (1 << 31)) == 0);
+
 			if (true)
 			{
-				f64 camera_speed = 0.000005f * counter_elapsed;
+				f64 camera_speed = 0.005f * counter_elapsed;
 				console_print_f32("counter_elapsed: %.05f \n", counter_elapsed);
 				console_print_f32("camera_speed: %.05f \n", camera_speed);
 
@@ -426,11 +427,11 @@ WinMain(HINSTANCE instance,
 
 			f32 vertices[] =
 			{
-				// positions			// texture coords
-				 1.0f,  1.0f, 0.0,		1.0f, 1.0f, // top right
-				 1.0f, -1.0f, 0.0, 		1.0f, 0.0f, // bottom right
-				-1.0f, -1.0f, 0.0, 		0.0f, 0.0f, // bottom left
-				-1.0f,  1.0f, 0.0, 		0.0f, 1.0f  // top left
+				// positions					// texture coords
+				 690.0f,  360.0f, 0.0,			1.0f, 1.0f, // top right
+				 690.0f, -360.0f, 0.0, 			1.0f, 0.0f, // bottom right
+				-690.0f, -360.0f, 0.0, 			0.0f, 0.0f, // bottom left
+				-690.0f,  360.0f, 0.0, 			0.0f, 1.0f  // top left
 			};
 
 			u32 indices[] =
@@ -455,34 +456,6 @@ WinMain(HINSTANCE instance,
 
 			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 			glEnableVertexAttribArray(0);
-
-			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-			glEnableVertexAttribArray(1);
-
-			u32 texture1;
-			glGenTextures(1, &texture1);
-			glBindTexture(GL_TEXTURE_2D, texture1);
-
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-			int width, height, number_of_channels;
-			unsigned char* data = stbi_load(
-				"G:\\VisualStudioProjects\\Platformer\\Platformer\\asset_packs\\Asset Pack-V1\\Player Idle\\Player Idle 48x48.png",
-				&width, &height, &number_of_channels, 0);
-
-			if (data)
-			{
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-				glGenerateMipmap(GL_TEXTURE_2D);
-			}
-			stbi_image_free(data);
-
-			glUseProgram(shader_program);
-			glUniform1i(glGetUniformLocation(shader_program, "texture1"), 0);
 
 			int monitor_refresh_hz = 60;
 			HDC refresh_dc = GetDC(window);
@@ -545,22 +518,19 @@ WinMain(HINSTANCE instance,
 				glClearColor(0.3f, 0.5f, 0.7f, 1.0f);
 				glClear(GL_COLOR_BUFFER_BIT);
 
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, texture1);
-
 				glUseProgram(shader_program);
 
 				HMM_Mat4 model = HMM_M4D(1.0f);
 				HMM_Mat4 view = HMM_M4D(1.0f);
 				HMM_Mat4 projection = HMM_M4D(1.0f);
-
 				view = HMM_LookAt_RH(camera_position, HMM_AddV3(camera_position, camera_front), camera_up);
+
 				//view = HMM_Translate(HMM_V3(0.0f, 0.0f, 0.0f));
 
 				HMM_Vec3 rotation_axis = HMM_V3(1.0f, 0.0f, 0.0f);
 				model = HMM_Rotate_RH(0.0f, rotation_axis);
-				projection = HMM_Perspective_RH_ZO(45.0f, SCREEN_WIDTH / SCREEN_HEIGHT, 0.1f, 100.0f);
-				//projection = HMM_Orthographic_RH_ZO(0.0f, 1280.0f, 0, 720.0f, -1.0f, 1.0f);
+				//projection = HMM_Perspective_RH_ZO(45.0f, SCREEN_WIDTH / SCREEN_HEIGHT, 0.1f, 100.0f);
+				projection = HMM_Orthographic_RH_ZO(-1280.0f, 1280.0f, -720.0f, 720.0f, -1000.0f, 1000.0f);
 				u32 model_location = glGetUniformLocation(shader_program, "model");
 				u32 view_location = glGetUniformLocation(shader_program, "view");
 				u32 projection_location = glGetUniformLocation(shader_program, "projection");
@@ -611,3 +581,29 @@ WinMain(HINSTANCE instance,
 	}
 }
 
+#if 0
+u32 texture1;
+glGenTextures(1, &texture1);
+glBindTexture(GL_TEXTURE_2D, texture1);
+
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+int width, height, number_of_channels;
+unsigned char* data = stbi_load(
+	"G:\\VisualStudioProjects\\Platformer\\Platformer\\asset_packs\\Asset Pack-V1\\Player Idle\\Player Idle 48x48.png",
+	&width, &height, &number_of_channels, 0);
+
+if (data)
+{
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	glGenerateMipmap(GL_TEXTURE_2D);
+}
+stbi_image_free(data);
+
+glUseProgram(shader_program);
+glUniform1i(glGetUniformLocation(shader_program, "texture1"), 0);
+#endif

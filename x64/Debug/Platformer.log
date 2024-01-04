@@ -1,11 +1,11 @@
 ﻿  win32_platformer.c
 G:\VisualStudioProjects\Platformer\Platformer\win32_platformer.c(73,20): warning C4018: '<': signed/unsigned mismatch
 G:\VisualStudioProjects\Platformer\Platformer\win32_platformer.c(78,20): warning C4018: '<': signed/unsigned mismatch
-G:\VisualStudioProjects\Platformer\Platformer\win32_platformer.c(336,52): warning C4244: 'function': conversion from 'i64' to 'f32', possible loss of data
-G:\VisualStudioProjects\Platformer\Platformer\win32_platformer.c(337,49): warning C4244: 'function': conversion from 'f64' to 'f32', possible loss of data
-G:\VisualStudioProjects\Platformer\Platformer\win32_platformer.c(345,76): warning C4244: 'function': conversion from 'f64' to 'float', possible loss of data
-G:\VisualStudioProjects\Platformer\Platformer\win32_platformer.c(349,76): warning C4244: 'function': conversion from 'f64' to 'float', possible loss of data
-G:\VisualStudioProjects\Platformer\Platformer\win32_platformer.c(353,76): warning C4020: 'HMM_NormV3': too many actual parameters
-G:\VisualStudioProjects\Platformer\Platformer\win32_platformer.c(495,25): warning C4244: 'initializing': conversion from 'double' to 'f32', possible loss of data
-G:\VisualStudioProjects\Platformer\Platformer\win32_platformer.c(496,39): warning C4244: 'initializing': conversion from 'double' to 'f32', possible loss of data
+G:\VisualStudioProjects\Platformer\Platformer\win32_platformer.c(337,52): warning C4244: 'function': conversion from 'i64' to 'f32', possible loss of data
+G:\VisualStudioProjects\Platformer\Platformer\win32_platformer.c(338,49): warning C4244: 'function': conversion from 'f64' to 'f32', possible loss of data
+G:\VisualStudioProjects\Platformer\Platformer\win32_platformer.c(346,76): warning C4244: 'function': conversion from 'f64' to 'float', possible loss of data
+G:\VisualStudioProjects\Platformer\Platformer\win32_platformer.c(350,76): warning C4244: 'function': conversion from 'f64' to 'float', possible loss of data
+G:\VisualStudioProjects\Platformer\Platformer\win32_platformer.c(354,76): warning C4020: 'HMM_NormV3': too many actual parameters
+G:\VisualStudioProjects\Platformer\Platformer\win32_platformer.c(468,25): warning C4244: 'initializing': conversion from 'double' to 'f32', possible loss of data
+G:\VisualStudioProjects\Platformer\Platformer\win32_platformer.c(469,39): warning C4244: 'initializing': conversion from 'double' to 'f32', possible loss of data
   Platformer.vcxproj -> G:\VisualStudioProjects\Platformer\x64\Debug\Platformer.exe

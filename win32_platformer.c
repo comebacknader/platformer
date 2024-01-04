@@ -427,11 +427,11 @@ WinMain(HINSTANCE instance,
 
 			f32 vertices[] =
 			{
-				// positions					// texture coords
-				 690.0f,  360.0f, 0.0,			1.0f, 1.0f, // top right
-				 690.0f, -360.0f, 0.0, 			1.0f, 0.0f, // bottom right
-				-690.0f, -360.0f, 0.0, 			0.0f, 0.0f, // bottom left
-				-690.0f,  360.0f, 0.0, 			0.0f, 1.0f  // top left
+				// position coordinates			
+				 0.0f,  720.0f, 0.0,	// top right
+				 0.0f, 0.0f, 0.0, 	// bottom right
+				-1280.0f, 0.0f, 0.0,	// bottom left
+				 -1280.0f,  720.0f, 0.0,		// top left
 			};
 
 			u32 indices[] =
@@ -454,7 +454,7 @@ WinMain(HINSTANCE instance,
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 			glEnableVertexAttribArray(0);
 
 			int monitor_refresh_hz = 60;

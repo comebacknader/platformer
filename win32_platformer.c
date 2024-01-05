@@ -429,8 +429,8 @@ WinMain(HINSTANCE instance,
 			{
 				// position coordinates
 				 1.0f,  1.0f, 0.0,		// top right
-				 1.0f, 0.0f, 0.0,		// bottom right
-				-1.0f, 0.0f, 0.0,		// bottom left
+				 1.0f, -1.0f, 0.0,		// bottom right
+				-1.0f, -1.0f, 0.0,		// bottom left
 				-1.0f,  1.0f, 0.0,		// top left
 			};
 
@@ -520,15 +520,17 @@ WinMain(HINSTANCE instance,
 
 				glUseProgram(shader_program);
 
-				HMM_Mat4 model = HMM_M4D(1.0f);
 				HMM_Mat4 view = HMM_M4D(1.0f);
-				HMM_Mat4 projection = HMM_M4D(1.0f);
-
-				model = HMM_Scale(HMM_V3(100.0f, 100.0f, 0.0f));
-
 				view = HMM_LookAt_RH(camera_position, HMM_AddV3(camera_position, camera_front), camera_up);
-				projection = HMM_Orthographic_RH_ZO(0.0f, 1280.0f, 0.0f, 720.0f, -1000.0f, 1000.0f);
 
+				// When I want to draw a new rectangle, I need to change the model of it
+				HMM_Mat4 model = HMM_M4D(1.0f);
+				model = HMM_Scale(HMM_V3(100.0f, 100.0f, 1.0f));
+				model.Columns[3].X = 100.0f;
+				model.Columns[3].Y = 100.0f;
+
+				HMM_Mat4 projection = HMM_M4D(1.0f);
+				projection = HMM_Orthographic_RH_ZO(0.0f, (f32)(window_width), 0.0f, (f32)(window_height), -1000.0f, 1000.0f);
 
 				u32 model_location = glGetUniformLocation(shader_program, "model");
 				u32 view_location = glGetUniformLocation(shader_program, "view");
@@ -539,6 +541,32 @@ WinMain(HINSTANCE instance,
 				glUniformMatrix4fv(projection_location, 1, GL_FALSE, &projection.Elements[0][0]);
 
 				glBindVertexArray(vao);
+				glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+				model = HMM_M4D(1.0f);
+				model = HMM_Scale(HMM_V3(100.0f, 100.0f, 1.0f));
+				
+				// Translation
+				model.Columns[3].X = 500.0f;
+				model.Columns[3].Y = 100.0f;
+				model.Columns[3].Z = 0.0f;
+
+				model_location = glGetUniformLocation(shader_program, "model");
+				glUniformMatrix4fv(model_location, 1, GL_FALSE, &model.Elements[0][0]);
+				
+				glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+				model = HMM_M4D(1.0f);
+				model = HMM_Scale(HMM_V3(100.0f, 100.0f, 1.0f));
+
+				// Translation
+				model.Columns[3].X = 500.0f;
+				model.Columns[3].Y = 500.0f;
+				model.Columns[3].Z = 1.0f;
+
+				model_location = glGetUniformLocation(shader_program, "model");
+				glUniformMatrix4fv(model_location, 1, GL_FALSE, &model.Elements[0][0]);
+
 				glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 				SwapBuffers(window_device_context);

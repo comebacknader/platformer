@@ -18,6 +18,9 @@
     <ClCompile Include="win32_platformer.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="platformer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="platformer.h">

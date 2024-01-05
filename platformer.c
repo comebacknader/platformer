@@ -1,0 +1,5 @@
+
+void 
+draw_rectangle()
+{
+}

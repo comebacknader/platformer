@@ -427,14 +427,14 @@ WinMain(HINSTANCE instance,
 
 			f32 vertices[] =
 			{
-				// position coordinates			
-				 0.0f,  720.0f, 0.0,	// top right
-				 0.0f, 0.0f, 0.0, 	// bottom right
-				-1280.0f, 0.0f, 0.0,	// bottom left
-				 -1280.0f,  720.0f, 0.0,		// top left
+				// position coordinates
+				 1.0f,  1.0f, 0.0,		// top right
+				 1.0f, 0.0f, 0.0,		// bottom right
+				-1.0f, 0.0f, 0.0,		// bottom left
+				-1.0f,  1.0f, 0.0,		// top left
 			};
 
-			u32 indices[] =
+			 u32 indices[] =
 			{
 				0, 1, 3, // first triangle
 				1, 2, 3  // second triangle
@@ -523,14 +523,13 @@ WinMain(HINSTANCE instance,
 				HMM_Mat4 model = HMM_M4D(1.0f);
 				HMM_Mat4 view = HMM_M4D(1.0f);
 				HMM_Mat4 projection = HMM_M4D(1.0f);
+
+				model = HMM_Scale(HMM_V3(100.0f, 100.0f, 0.0f));
+
 				view = HMM_LookAt_RH(camera_position, HMM_AddV3(camera_position, camera_front), camera_up);
+				projection = HMM_Orthographic_RH_ZO(0.0f, 1280.0f, 0.0f, 720.0f, -1000.0f, 1000.0f);
 
-				//view = HMM_Translate(HMM_V3(0.0f, 0.0f, 0.0f));
 
-				HMM_Vec3 rotation_axis = HMM_V3(1.0f, 0.0f, 0.0f);
-				model = HMM_Rotate_RH(0.0f, rotation_axis);
-				//projection = HMM_Perspective_RH_ZO(45.0f, SCREEN_WIDTH / SCREEN_HEIGHT, 0.1f, 100.0f);
-				projection = HMM_Orthographic_RH_ZO(-1280.0f, 1280.0f, -720.0f, 720.0f, -1000.0f, 1000.0f);
 				u32 model_location = glGetUniformLocation(shader_program, "model");
 				u32 view_location = glGetUniformLocation(shader_program, "view");
 				u32 projection_location = glGetUniformLocation(shader_program, "projection");

@@ -35,22 +35,22 @@ global i64 global_performance_counter_frequency;
 global f64 ms_per_frame;
 global i64 counter_elapsed;
 
-HMM_Vec3 camera_position;
-HMM_Vec3 camera_front;
-HMM_Vec3 up;
-HMM_Vec3 camera_target;
-HMM_Vec3 camera_direction;
-HMM_Vec3 camera_right;
-HMM_Vec3 camera_up;
+v3 camera_position;
+v3 camera_front;
+v3 up;
+v3 camera_target;
+v3 camera_direction;
+v3 camera_right;
+v3 camera_up;
 
 typedef struct FileReadResults
 {
 	u32 contents_size;
-	void* contents;
+	void *contents;
 } FileReadResults;
 
 global void
-console_print_f32(char* fmt_string, f32 number)
+console_print_f32(char *fmt_string, f32 number)
 {
 	char buffer[1024];
 	snprintf(buffer, sizeof(buffer), fmt_string, number);
@@ -69,7 +69,7 @@ concat_strings(char *str1, char *str2)
 		str2_length++;
 	}
 	u32 new_string_length = str1_length + str2_length;
-	char* new_string = (char*)malloc(sizeof(char) * new_string_length);
+	char *new_string = (char*)malloc(sizeof(char) * new_string_length);
 	u32 index = 0;
 	for (int x = 0; x < str1_length; x++)
 	{
@@ -85,13 +85,13 @@ concat_strings(char *str1, char *str2)
 }
 
 global u32
-get_length(char* str)
+get_length(char *str)
 {
 
 }
 
 internal u8
-strings_equal(char* str1, char* str2)
+strings_equal(char *str1, char *str2)
 {
 	int str1_length = 0;
 	int str2_length = 0;
@@ -212,7 +212,7 @@ truncate_u64(u64 value)
 }
 
 internal void
-free_file_memory(void* file_memory)
+free_file_memory(void *file_memory)
 {
 	if (file_memory)
 	{
@@ -221,7 +221,7 @@ free_file_memory(void* file_memory)
 }
 
 internal FileReadResults
-read_file_to_memory(char* filepath)
+read_file_to_memory(char *filepath)
 {
 	FileReadResults result = { 0 };
 	HANDLE file_handle = CreateFileA(filepath, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
@@ -260,7 +260,7 @@ read_file_to_memory(char* filepath)
 }
 
 internal void
-check_shader_errors(char* type, u32 object)
+check_shader_errors(char *type, u32 object)
 {
 	int success;
 	char info_log[512];
@@ -311,7 +311,7 @@ check_shader_errors(char* type, u32 object)
 }
 
 internal void
-win32_process_pending_messages(GameControllerInput* keyboard_controller)
+win32_process_pending_messages(GameControllerInput *keyboard_controller)
 {
 	MSG message = { 0 };
 	while (PeekMessage(&message, 0, 0, 0, PM_REMOVE))
@@ -493,11 +493,11 @@ WinMain(HINSTANCE instance,
 			GameInput *new_input = &input[0];
 			GameInput *old_input = &input[1];
 
-			camera_position = HMM_V3(0.0f, 0.0f, 3.0f);
+			camera_position = v3(0.0f, 0.0f, 3.0f);
 			camera_front = HMM_V3(0.0f, 0.0f, -1.0f);
 			up = HMM_V3(0.0f, 1.0f, 0.0f);
 
-			camera_target = HMM_V3(0.0f, 0.0f, 0.0f);
+			camera_target = v3(0.0f, 0.0f, 0.0f);
 			camera_direction = HMM_NormV3(HMM_SubV3(camera_position, camera_target));
 			camera_right = HMM_NormV3(HMM_Cross(up, camera_direction));
 			camera_up = HMM_Cross(camera_direction, camera_right);

@@ -2,13 +2,14 @@
 #include "stb_image.h"
 #include <windows.h>
 #include <stdio.h>
+
+#define HANDMADE_MATH_USE_DEGREES
+#include "HandmadeMath.h"
+
 #include "platformer.h"
 
 #define GL_LITE_IMPLEMENTATION
 #include "gl_lite.h"
-
-#define HANDMADE_MATH_USE_DEGREES
-#include "HandmadeMath.h"
 
 /*
 
@@ -364,6 +365,24 @@ win32_process_pending_messages(GameControllerInput* keyboard_controller)
 	}
 }
 
+
+global void
+draw_rectangle(u32 shader_program, v3 scale, v3 translate)
+{
+	m4 model = HMM_M4D(1.0f);
+	model = HMM_Scale(scale);
+
+	// Translation
+	model.Columns[3].X = translate.X;
+	model.Columns[3].Y = translate.Y;
+	model.Columns[3].Z = 0.0f;
+
+	u32 model_location = glGetUniformLocation(shader_program, "model");
+	glUniformMatrix4fv(model_location, 1, GL_FALSE, &model.Elements[0][0]);
+
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+}
+
 int CALLBACK
 WinMain(HINSTANCE instance,
 	HINSTANCE prev_instance,
@@ -428,10 +447,10 @@ WinMain(HINSTANCE instance,
 			f32 vertices[] =
 			{
 				// position coordinates
-				 1.0f,  1.0f, 0.0,		// top right
-				 1.0f, -1.0f, 0.0,		// bottom right
-				-1.0f, -1.0f, 0.0,		// bottom left
-				-1.0f,  1.0f, 0.0,		// top left
+				 0.5f,  0.5f, 0.0,		// top right
+				 0.5f, -0.5f, 0.0,		// bottom right
+				-0.5f, -0.5f, 0.0,		// bottom left
+				-0.5f,  0.5f, 0.0,		// top left
 			};
 
 			 u32 indices[] =
@@ -520,17 +539,18 @@ WinMain(HINSTANCE instance,
 
 				glUseProgram(shader_program);
 
-				HMM_Mat4 view = HMM_M4D(1.0f);
+				// I now need to have it so that the world coordinates line up to the aspect ratio of 1280 x 720 
+
+				m4 view = m4_diagonal(1.0f);
 				view = HMM_LookAt_RH(camera_position, HMM_AddV3(camera_position, camera_front), camera_up);
 
-				// When I want to draw a new rectangle, I need to change the model of it
-				HMM_Mat4 model = HMM_M4D(1.0f);
-				model = HMM_Scale(HMM_V3(100.0f, 100.0f, 1.0f));
-				model.Columns[3].X = 100.0f;
-				model.Columns[3].Y = 100.0f;
+				m4 model = m4_diagonal(1.0f);
+				model = HMM_Scale(v3(100.0f, 100.0f, 1.0f));
+				model.Columns[3].X = 0.0f;
+				model.Columns[3].Y = 600.0f;
 
-				HMM_Mat4 projection = HMM_M4D(1.0f);
-				projection = HMM_Orthographic_RH_ZO(0.0f, (f32)(window_width), 0.0f, (f32)(window_height), -1000.0f, 1000.0f);
+				m4 projection = m4_diagonal(1.0f);
+				projection = HMM_Orthographic_RH_ZO(0.0f, (f32)(1280.0f), 0.0f, (f32)(720.0f), -0.1f, 1000.0f);
 
 				u32 model_location = glGetUniformLocation(shader_program, "model");
 				u32 view_location = glGetUniformLocation(shader_program, "view");
@@ -543,31 +563,12 @@ WinMain(HINSTANCE instance,
 				glBindVertexArray(vao);
 				glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-				model = HMM_M4D(1.0f);
-				model = HMM_Scale(HMM_V3(100.0f, 100.0f, 1.0f));
-				
-				// Translation
-				model.Columns[3].X = 500.0f;
-				model.Columns[3].Y = 100.0f;
-				model.Columns[3].Z = 0.0f;
-
-				model_location = glGetUniformLocation(shader_program, "model");
-				glUniformMatrix4fv(model_location, 1, GL_FALSE, &model.Elements[0][0]);
-				
-				glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-				model = HMM_M4D(1.0f);
-				model = HMM_Scale(HMM_V3(100.0f, 100.0f, 1.0f));
-
-				// Translation
-				model.Columns[3].X = 500.0f;
-				model.Columns[3].Y = 500.0f;
-				model.Columns[3].Z = 1.0f;
-
-				model_location = glGetUniformLocation(shader_program, "model");
-				glUniformMatrix4fv(model_location, 1, GL_FALSE, &model.Elements[0][0]);
-
-				glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+				v3 scale = v3(100.0f, 100.0f, 1.0f);
+				for (int x = 0; x < 1300; x += 101)
+				{
+					v3 translation = v3((f32)(x), 0.0f, 0.0f);
+					draw_rectangle(shader_program, scale, translation);
+				}
 
 				SwapBuffers(window_device_context);
 				ReleaseDC(window, window_device_context);
@@ -607,6 +608,7 @@ WinMain(HINSTANCE instance,
 		OutputDebugStringA("Could not register window class \n");
 	}
 }
+
 
 #if 0
 u32 texture1;

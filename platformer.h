@@ -17,6 +17,14 @@ typedef uint64_t u64;
 typedef float f32;
 typedef double f64;
 
+typedef HMM_Mat4 m4;
+typedef HMM_Mat3 m3;
+typedef HMM_Vec3 v3;
+typedef HMM_Vec2 v2;
+
+#define v3(x, y, z) HMM_V3(x, y, z)
+#define m4_diagonal(value) HMM_M4D(value)
+
 #define internal static
 #define local_persist static
 #define global static

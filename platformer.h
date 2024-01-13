@@ -2,6 +2,8 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#define HANDMADE_MATH_USE_DEGREES
+#include "HandmadeMath.h"
 
 typedef int8_t i8;
 typedef int16_t i16;

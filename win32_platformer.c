@@ -3,9 +3,6 @@
 #include <windows.h>
 #include <stdio.h>
 
-#define HANDMADE_MATH_USE_DEGREES
-#include "HandmadeMath.h"
-
 #include "platformer.h"
 
 #define GL_LITE_IMPLEMENTATION
@@ -13,8 +10,9 @@
 
 /*
 
-	TODO(Nader): I  need to get some number for dt, and pass that to the movement code.
-	GLFW uses glfwGetTime()
+	TODO(Nader): Start separating platform code from Game Code. 
+
+	Platform code with handle the Input, but then I need to pass that Input into the game_update_and_render()
 
 	TODO(Nader): Impelement hot reloading by creating a build.bat file
 
@@ -36,6 +34,8 @@ v3 camera_direction;
 v3 camera_right;
 v3 camera_up;
 
+f32 dt = 1 / 60.0f;
+f32 player_velocity = 2500.0f;
 f32 movement_x = 0.0f;
 f32 movement_y = 0.0f;
 
@@ -47,6 +47,14 @@ typedef struct FileReadResults
 
 global void
 console_print_f32(char *fmt_string, f32 number)
+{
+	char buffer[1024];
+	snprintf(buffer, sizeof(buffer), fmt_string, number);
+	OutputDebugStringA(buffer);
+}
+
+global void
+console_print_f64(char* fmt_string, f64 number)
 {
 	char buffer[1024];
 	snprintf(buffer, sizeof(buffer), fmt_string, number);
@@ -331,7 +339,7 @@ win32_process_pending_messages(GameControllerInput *keyboard_controller)
 			if (is_down || was_down)
 			{
 				f64 camera_speed = 0.005f * counter_elapsed;
-
+				f32 velocity = player_velocity * dt;
 				if (vk_code == VK_ESCAPE)
 				{
 					game_loop = false;
@@ -339,22 +347,22 @@ win32_process_pending_messages(GameControllerInput *keyboard_controller)
 				else if (vk_code == VK_UP)
 				{
 					camera_position = HMM_AddV3(camera_position, HMM_MulV3F(camera_front, camera_speed));
-					movement_y += 1.0f;
+					movement_y += velocity;
 				}
 				else if (vk_code == VK_DOWN)
 				{
 					camera_position = HMM_SubV3(camera_position, HMM_MulV3F(camera_front, camera_speed));
-					movement_y -= 1.0f;
+					movement_y -= velocity;
 				}
 				else if (vk_code == VK_LEFT)
 				{
 					camera_position = HMM_SubV3(camera_position, HMM_NormV3(camera_front, camera_speed));
-					movement_x -= 1.0f;
+					movement_x -= velocity;
 				}
 				else if (vk_code == VK_RIGHT)
 				{
 					camera_position = HMM_SubV3(camera_position, HMM_NormV3(camera_front, camera_speed));
-					movement_x += 1.0f;
+					movement_x += velocity;
 				}
 			}
 		} break;
@@ -504,9 +512,6 @@ WinMain(HINSTANCE instance,
 			camera_right = HMM_NormV3(HMM_Cross(up, camera_direction));
 			camera_up = HMM_Cross(camera_direction, camera_right);
 
-			float delta_time = 0.0f;
-			float last_time = 0.0f;
-
 			// BEGIN FRAME
 
 			LARGE_INTEGER last_counter;
@@ -514,6 +519,8 @@ WinMain(HINSTANCE instance,
 			u64 last_cycle_count = __rdtsc();
 			f32 scale_x = 100.0f;
 			f32 scale_y = 100.0f;
+
+			f32 time = 0.0f;
 
 			while (game_loop)
 			{
@@ -584,6 +591,9 @@ WinMain(HINSTANCE instance,
 				counter_elapsed = end_counter.QuadPart - last_counter.QuadPart;
 				f64 fps = (f64)global_performance_counter_frequency / (f64)counter_elapsed;
 				ms_per_frame = (((1000.0f * (f64)counter_elapsed / (f64)global_performance_counter_frequency)));
+
+				//console_print_f64("last_counter.QuadPart: %d\n", (f64)last_counter.QuadPart);
+				//console_print_f64("end_counter.QuadPart: %d\n", (f64)end_counter.QuadPart);
 #if 0
 				char buffer[1024];
 				snprintf(buffer, sizeof(buffer), "%.02f fps | %.02f ms/f\n", fps, ms_per_frame);

@@ -1,3 +1,4 @@
+#include "platformer.h"
 
 typedef struct Level
 {
@@ -11,4 +12,8 @@ typedef struct Game
 
 void
 draw_rectangle()
+{}
+
+global void
+game_update_and_render(GameInput *Input)
 {}

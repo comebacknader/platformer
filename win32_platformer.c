@@ -13,17 +13,10 @@
 
 /*
 
-	- Start with basic shapes and color - this means take off textures, just draw shapes with colors
-	- Populate the world with rectangles
-	- Have a player rectangle sit on ground rectangle, move and jump
-	- Have player accelerate when holding a button 
-	- Create slopes in the world, and have player walk up and down slopes
-	- Have platforms that the character can jump from bottom into 
-	- Have character be able to wall slide, and jump off walls
+	TODO(Nader): I  need to get some number for dt, and pass that to the movement code.
+	GLFW uses glfwGetTime()
 
-	Things I Want:
-	- ALL 2D Lighting: Glow, Normal Maps, etc. 
-	- Particle Effects
+	TODO(Nader): Impelement hot reloading by creating a build.bat file
 
 */
 
@@ -42,6 +35,9 @@ v3 camera_target;
 v3 camera_direction;
 v3 camera_right;
 v3 camera_up;
+
+f32 movement_x = 0.0f;
+f32 movement_y = 0.0f;
 
 typedef struct FileReadResults
 {
@@ -332,11 +328,9 @@ win32_process_pending_messages(GameControllerInput *keyboard_controller)
 			b32 was_down = ((message.lParam & (1 << 30)) != 0);
 			b32 is_down = ((message.lParam & (1 << 31)) == 0);
 
-			if (true)
+			if (is_down || was_down)
 			{
 				f64 camera_speed = 0.005f * counter_elapsed;
-				console_print_f32("counter_elapsed: %.05f \n", counter_elapsed);
-				console_print_f32("camera_speed: %.05f \n", camera_speed);
 
 				if (vk_code == VK_ESCAPE)
 				{
@@ -345,14 +339,22 @@ win32_process_pending_messages(GameControllerInput *keyboard_controller)
 				else if (vk_code == VK_UP)
 				{
 					camera_position = HMM_AddV3(camera_position, HMM_MulV3F(camera_front, camera_speed));
+					movement_y += 1.0f;
 				}
 				else if (vk_code == VK_DOWN)
 				{
 					camera_position = HMM_SubV3(camera_position, HMM_MulV3F(camera_front, camera_speed));
+					movement_y -= 1.0f;
 				}
 				else if (vk_code == VK_LEFT)
 				{
 					camera_position = HMM_SubV3(camera_position, HMM_NormV3(camera_front, camera_speed));
+					movement_x -= 1.0f;
+				}
+				else if (vk_code == VK_RIGHT)
+				{
+					camera_position = HMM_SubV3(camera_position, HMM_NormV3(camera_front, camera_speed));
+					movement_x += 1.0f;
 				}
 			}
 		} break;
@@ -405,7 +407,7 @@ WinMain(HINSTANCE instance,
 		HWND window = CreateWindowExA(
 			0, window_class.lpszClassName, "Platformer",
 			WS_OVERLAPPEDWINDOW | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT,
-			CW_USEDEFAULT, CW_USEDEFAULT, 0, 0, instance, 0);
+			SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, instance, 0);
 
 		if (window)
 		{
@@ -447,10 +449,10 @@ WinMain(HINSTANCE instance,
 			f32 vertices[] =
 			{
 				// position coordinates
-				 0.5f,  0.5f, 0.0,		// top right
-				 0.5f, -0.5f, 0.0,		// bottom right
-				-0.5f, -0.5f, 0.0,		// bottom left
-				-0.5f,  0.5f, 0.0,		// top left
+				 1.0f,  1.0f, 0.0,		// top right
+				 1.0f, -1.0f, 0.0,		// bottom right
+				-1.0f, -1.0f, 0.0,		// bottom left
+				-1.0f,  1.0f, 0.0,		// top left
 			};
 
 			 u32 indices[] =
@@ -510,11 +512,13 @@ WinMain(HINSTANCE instance,
 			LARGE_INTEGER last_counter;
 			QueryPerformanceCounter(&last_counter);
 			u64 last_cycle_count = __rdtsc();
+			f32 scale_x = 100.0f;
+			f32 scale_y = 100.0f;
 
 			while (game_loop)
 			{
-				GameControllerInput* old_keyboard_controller = get_controller(old_input, 0);
-				GameControllerInput* new_keyboard_controller = get_controller(new_input, 0);
+				GameControllerInput *old_keyboard_controller = get_controller(old_input, 0);
+				GameControllerInput *new_keyboard_controller = get_controller(new_input, 0);
 				new_keyboard_controller->is_connected = true;
 				for (int button_index = 0;
 					button_index < array_count(new_keyboard_controller->buttons);
@@ -539,36 +543,31 @@ WinMain(HINSTANCE instance,
 
 				glUseProgram(shader_program);
 
-				// I now need to have it so that the world coordinates line up to the aspect ratio of 1280 x 720 
+				/*
+				
+					- Want the world to be 0,0 at the bottom left, and when I scale, I want to scale up and to the right.  
+					
+				*/
 
 				m4 view = m4_diagonal(1.0f);
 				view = HMM_LookAt_RH(camera_position, HMM_AddV3(camera_position, camera_front), camera_up);
 
-				m4 model = m4_diagonal(1.0f);
-				model = HMM_Scale(v3(100.0f, 100.0f, 1.0f));
-				model.Columns[3].X = 0.0f;
-				model.Columns[3].Y = 600.0f;
-
 				m4 projection = m4_diagonal(1.0f);
-				projection = HMM_Orthographic_RH_ZO(0.0f, (f32)(1280.0f), 0.0f, (f32)(720.0f), -0.1f, 1000.0f);
+				projection = HMM_Orthographic_RH_NO(0.0f, window_width,  0.0f, window_height, -0.1f, 1000.0f);
 
-				u32 model_location = glGetUniformLocation(shader_program, "model");
 				u32 view_location = glGetUniformLocation(shader_program, "view");
 				u32 projection_location = glGetUniformLocation(shader_program, "projection");
 
-				glUniformMatrix4fv(model_location, 1, GL_FALSE, &model.Elements[0][0]);
 				glUniformMatrix4fv(view_location, 1, GL_FALSE, &view.Elements[0][0]);
 				glUniformMatrix4fv(projection_location, 1, GL_FALSE, &projection.Elements[0][0]);
 
 				glBindVertexArray(vao);
-				glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-				v3 scale = v3(100.0f, 100.0f, 1.0f);
-				for (int x = 0; x < 1300; x += 101)
-				{
-					v3 translation = v3((f32)(x), 0.0f, 0.0f);
-					draw_rectangle(shader_program, scale, translation);
-				}
+				v3 scale = v3(scale_x, scale_y, 0.0f);
+				v3 translation = v3(movement_x, movement_y, 0.0f);
+				draw_rectangle(shader_program, scale, translation);
+				//movement_x += 0.5f;
+				//movement_y += 0.5f;
 
 				SwapBuffers(window_device_context);
 				ReleaseDC(window, window_device_context);
@@ -594,6 +593,9 @@ WinMain(HINSTANCE instance,
 				last_cycle_count = end_cycle_count;
 
 			}
+
+			// EXIT GAME
+
 			glDeleteVertexArrays(1, &vao);
 			glDeleteBuffers(1, &vbo);
 			glDeleteBuffers(1, &ebo);

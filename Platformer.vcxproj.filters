@@ -43,5 +43,10 @@
     <None Include="sprite_shader.vert" />
     <None Include="sprite_shader.frag" />
     <None Include=".gitignore" />
+    <None Include="SDL2.dll" />
+    <None Include=".gitattributes" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="README-SDL.txt" />
   </ItemGroup>
 </Project>

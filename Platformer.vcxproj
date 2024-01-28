@@ -140,9 +140,14 @@
     <ClInclude Include="stb_image.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".gitattributes" />
     <None Include=".gitignore" />
+    <None Include="SDL2.dll" />
     <None Include="sprite_shader.frag" />
     <None Include="sprite_shader.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="README-SDL.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

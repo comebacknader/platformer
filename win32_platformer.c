@@ -10,11 +10,10 @@
 
 /*
 
+	TODO(Nader): Fix my timestep, so that movement is smooth and not jittery
 	TODO(Nader): Start separating platform code from Game Code. 
-
-	Platform code with handle the Input, but then I need to pass that Input into the game_update_and_render()
-
 	TODO(Nader): Impelement hot reloading by creating a build.bat file
+
 
 */
 
@@ -35,9 +34,9 @@ v3 camera_right;
 v3 camera_up;
 
 f32 dt = 1 / 60.0f;
-f32 player_velocity = 2500.0f;
-f32 movement_x = 0.0f;
-f32 movement_y = 0.0f;
+f32 player_velocity = 100.0f;
+f32 movement_x = 100.0f;
+f32 movement_y = 100.0f;
 
 typedef struct FileReadResults
 {
@@ -336,10 +335,10 @@ win32_process_pending_messages(GameControllerInput *keyboard_controller)
 			b32 was_down = ((message.lParam & (1 << 30)) != 0);
 			b32 is_down = ((message.lParam & (1 << 31)) == 0);
 
-			if (is_down || was_down)
+			if (true)
 			{
 				f64 camera_speed = 0.005f * counter_elapsed;
-				f32 velocity = player_velocity * dt;
+				f32 velocity = player_velocity * (counter_elapsed/1000000.0f);
 				if (vk_code == VK_ESCAPE)
 				{
 					game_loop = false;
@@ -364,6 +363,11 @@ win32_process_pending_messages(GameControllerInput *keyboard_controller)
 					camera_position = HMM_SubV3(camera_position, HMM_NormV3(camera_front, camera_speed));
 					movement_x += velocity;
 				}
+				else if (vk_code == VK_RIGHT && vk_code == VK_UP)
+				{
+					movement_x += velocity;
+					movement_y += velocity;
+				}
 			}
 		} break;
 		default:
@@ -375,17 +379,19 @@ win32_process_pending_messages(GameControllerInput *keyboard_controller)
 	}
 }
 
-
 global void
 draw_rectangle(u32 shader_program, v3 scale, v3 translate)
 {
 	m4 model = HMM_M4D(1.0f);
+
+	// Scale
 	model = HMM_Scale(scale);
 
 	// Translation
 	model.Columns[3].X = translate.X;
 	model.Columns[3].Y = translate.Y;
 	model.Columns[3].Z = 0.0f;
+
 
 	u32 model_location = glGetUniformLocation(shader_program, "model");
 	glUniformMatrix4fv(model_location, 1, GL_FALSE, &model.Elements[0][0]);
@@ -427,8 +433,8 @@ WinMain(HINSTANCE instance,
 			FileReadResults sprite_vertex_file = read_file_to_memory(sprite_vertex_filepath);
 			FileReadResults sprite_fragment_file = read_file_to_memory(sprite_fragment_filepath);
 
-			char* vertex_shader_source = (char*)sprite_vertex_file.contents;
-			char* fragment_shader_source = (char*)sprite_fragment_file.contents;
+			char *vertex_shader_source = (char *)sprite_vertex_file.contents;
+			char *fragment_shader_source = (char *)sprite_fragment_file.contents;
 
 			u32 vertex_shader;
 			vertex_shader = glCreateShader(GL_VERTEX_SHADER);
@@ -524,6 +530,7 @@ WinMain(HINSTANCE instance,
 
 			while (game_loop)
 			{
+				console_print_f64("last_counter: %9.2f \n", (f64)last_counter.QuadPart);
 				GameControllerInput *old_keyboard_controller = get_controller(old_input, 0);
 				GameControllerInput *new_keyboard_controller = get_controller(new_input, 0);
 				new_keyboard_controller->is_connected = true;
@@ -550,12 +557,6 @@ WinMain(HINSTANCE instance,
 
 				glUseProgram(shader_program);
 
-				/*
-				
-					- Want the world to be 0,0 at the bottom left, and when I scale, I want to scale up and to the right.  
-					
-				*/
-
 				m4 view = m4_diagonal(1.0f);
 				view = HMM_LookAt_RH(camera_position, HMM_AddV3(camera_position, camera_front), camera_up);
 
@@ -571,6 +572,7 @@ WinMain(HINSTANCE instance,
 				glBindVertexArray(vao);
 
 				v3 scale = v3(scale_x, scale_y, 0.0f);
+				movement_x += 1.0f;
 				v3 translation = v3(movement_x, movement_y, 0.0f);
 				draw_rectangle(shader_program, scale, translation);
 				//movement_x += 0.5f;
@@ -589,6 +591,7 @@ WinMain(HINSTANCE instance,
 				last_cycle_count = end_cycle_count;
 
 				counter_elapsed = end_counter.QuadPart - last_counter.QuadPart;
+				console_print_f64("counter_elapsed: %9.2f \n", counter_elapsed);
 				f64 fps = (f64)global_performance_counter_frequency / (f64)counter_elapsed;
 				ms_per_frame = (((1000.0f * (f64)counter_elapsed / (f64)global_performance_counter_frequency)));
 
